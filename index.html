@@ -6,8 +6,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>十齋日｜地藏禪寺弘法共修</title>
 
-<script src="https://cdn.jsdelivr.net/npm/lunar-javascript@1.7.8/lunar.js"></script>
-
 <style>
 *{box-sizing:border-box}
 body{
@@ -162,6 +160,7 @@ footer{
  padding:12px;
  border-radius:8px;
  display:none;
+ line-height:1.8;
 }
 @media(max-width:380px){
  .date-number{width:55px}
@@ -189,9 +188,7 @@ footer{
   <div class="countdown" id="countdown"></div>
  </section>
 
- <div class="error" id="errorMessage">
-  農曆日期載入失敗，請重新整理網頁。
- </div>
+ <div class="error" id="errorMessage"></div>
 
  <h2 class="section-title">本月十齋日</h2>
  <p class="intro">
@@ -280,13 +277,13 @@ function getLunarName(lunar){
  lunar.getDayInChinese();
 }
 
-
-function sameLunarMonth(a, b) {
-  return a.getYear() === b.getYear() &&
-         a.getMonth() === b.getMonth();
+/* 比較農曆年及月份，閏月使用負月份值區分 */
+function sameLunarMonth(a,b){
+ return a.getYear()===b.getYear()
+ && a.getMonth()===b.getMonth();
 }
 
-
+/* 計算本農曆月的十齋日國曆日期 */
 function getMonthDates(today){
  const lunarToday=getLunar(today);
  const firstDay=addDays(today,1-lunarToday.getDay());
@@ -296,7 +293,9 @@ function getMonthDates(today){
   const solar=addDays(firstDay,i);
   const lunar=getLunar(solar);
 
-  if(!sameLunarMonth(lunar,lunarToday)) break;
+  if(!sameLunarMonth(lunar,lunarToday)){
+   break;
+  }
 
   if(fastingDays.includes(lunar.getDay())){
    result.push({
@@ -309,6 +308,7 @@ function getMonthDates(today){
  return result;
 }
 
+/* 尋找下一個十齋日 */
 function getNextFasting(today){
  for(let i=0;i<=40;i++){
   const date=addDays(today,i);
@@ -325,6 +325,7 @@ function getNextFasting(today){
  return null;
 }
 
+/* 顯示今日日期及倒數 */
 function renderToday(today){
  const lunar=getLunar(today);
 
@@ -343,18 +344,18 @@ function renderToday(today){
    "農曆"+lunar.getDayInChinese()+"日・歡迎大眾共修";
  }else{
   const next=getNextFasting(today);
-
   status.textContent="今日不是十齋日";
 
   if(next){
    countdown.textContent=
-    next.distance===0
-    ?"今天就是十齋日"
-    :"距離下一個十齋日還有 "+next.distance+" 天";
+    "距離下一個十齋日還有 "+next.distance+" 天";
+  }else{
+   countdown.textContent="暫時無法計算下一個十齋日";
   }
  }
 }
 
+/* 顯示本月十齋日清單 */
 function renderCalendar(today){
  const lunar=getLunar(today);
  const dates=getMonthDates(today);
@@ -366,12 +367,17 @@ function renderCalendar(today){
  const list=document.getElementById("calendarList");
  list.innerHTML="";
 
+ if(dates.length===0){
+  list.textContent="本月齋日資料暫時無法顯示。";
+  return;
+ }
+
  dates.forEach(item=>{
   const row=document.createElement("div");
   row.className="date-row";
 
   const isToday=sameDay(item.solar,today);
-  const isPast=item.solar<today;
+  const isPast=item.solar.getTime()<today.getTime();
 
   if(isToday) row.classList.add("today-row");
   if(isPast) row.classList.add("past");
@@ -401,7 +407,7 @@ function renderCalendar(today){
    state.textContent="已過";
   }else{
    const distance=Math.round(
-    (item.solar-today)/86400000
+    (item.solar.getTime()-today.getTime())/86400000
    );
    state.textContent="還有 "+distance+" 天";
   }
@@ -419,62 +425,109 @@ function renderCalendar(today){
  });
 }
 
+/* 建立十齋日佛菩薩按鈕 */
 const days=document.getElementById("days");
 
 data.forEach((item,index)=>{
  const btn=document.createElement("button");
  btn.className="day";
- btn.innerHTML=
-  `<strong>${item[0]}</strong><span>${item[1]}</span>`;
 
+ const title=document.createElement("strong");
+ title.textContent=item[0];
+
+ const name=document.createElement("span");
+ name.textContent=item[1];
+
+ btn.appendChild(title);
+ btn.appendChild(name);
  btn.onclick=()=>showDay(index,null);
+
  days.appendChild(btn);
 });
 
+/* 顯示齋日詳細資料 */
 function showDay(index,solarDate){
  const item=data[index];
+ if(!item)return;
 
- document.getElementById("date").textContent=
- "農曆"+item[0];
-
- document.getElementById("buddha").textContent=
- item[1];
-
+ document.getElementById("date").textContent="農曆"+item[0];
+ document.getElementById("buddha").textContent=item[1];
  document.getElementById("executor").textContent=
  "當日執事："+item[2];
-
- document.getElementById("description").textContent=
- item[3];
+ document.getElementById("description").textContent=item[3];
 
  document.getElementById("detailSolar").textContent=
- solarDate
- ?formatSolar(solarDate)
- :"十齋日修持專區";
+ solarDate?formatSolar(solarDate):"十齋日修持專區";
 
  days.style.display="none";
  document.querySelector(".calendar").style.display="none";
- document.querySelector(".section-title").style.display="none";
+
+ document.querySelectorAll(".section-title").forEach(
+  el=>el.style.display="none"
+ );
+
  document.querySelector(".intro").style.display="none";
  document.querySelector(".today").style.display="none";
-
  document.getElementById("detail").style.display="block";
+
  window.scrollTo(0,0);
 }
 
+/* 返回首頁 */
 function goBack(){
  document.getElementById("detail").style.display="none";
  days.style.display="grid";
  document.querySelector(".calendar").style.display="block";
+
  document.querySelectorAll(".section-title").forEach(
   el=>el.style.display="block"
  );
+
  document.querySelector(".intro").style.display="block";
  document.querySelector(".today").style.display="block";
+
  window.scrollTo(0,0);
 }
 
-function start(){
+/* 依序嘗試兩個農曆程式來源 */
+function loadLunarLibrary(url){
+ return new Promise((resolve,reject)=>{
+  const script=document.createElement("script");
+  script.src=url;
+
+  script.onload=()=>{
+   if(typeof Lunar!=="undefined"){
+    resolve();
+   }else{
+    reject(new Error("農曆程式載入後未找到 Lunar"));
+   }
+  };
+
+  script.onerror=()=>{
+   reject(new Error("無法載入："+url));
+  };
+
+  document.head.appendChild(script);
+ });
+}
+
+/* 啟動網站 */
+async function start(){
+ const errorBox=document.getElementById("errorMessage");
+
  try{
+  try{
+   await loadLunarLibrary(
+    "https://cdn.jsdelivr.net/npm/lunar-javascript@1.7.8/lunar.js"
+   );
+  }catch(firstError){
+   console.warn("第一個來源載入失敗，改用備用來源",firstError);
+
+   await loadLunarLibrary(
+    "https://unpkg.com/lunar-javascript@1.7.8/lunar.js"
+   );
+  }
+
   if(typeof Lunar==="undefined"){
    throw new Error("農曆工具尚未載入");
   }
@@ -484,11 +537,21 @@ function start(){
   renderToday(today);
   renderCalendar(today);
 
+  errorBox.style.display="none";
+
  }catch(error){
-  console.error(error);
-  document.getElementById("errorMessage").style.display="block";
+  console.error("十齋日日期載入錯誤：",error);
+
+  errorBox.textContent=
+   "農曆日期載入失敗。請確認網路連線，稍後重新整理。錯誤："+error.message;
+
+  errorBox.style.display="block";
+
   document.getElementById("todayStatus").textContent=
    "日期資料暫時無法載入";
+
+  document.getElementById("monthTitle").textContent=
+   "農曆日期暫時無法顯示";
  }
 }
 

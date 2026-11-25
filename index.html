@@ -280,11 +280,12 @@ function getLunarName(lunar){
  lunar.getDayInChinese();
 }
 
-function sameLunarMonth(a,b){
- return a.getYear()===b.getYear()
- && a.getMonth()===b.getMonth()
- && a.isLeap()===b.isLeap();
+
+function sameLunarMonth(a, b) {
+  return a.getYear() === b.getYear() &&
+         a.getMonth() === b.getMonth();
 }
+
 
 function getMonthDates(today){
  const lunarToday=getLunar(today);

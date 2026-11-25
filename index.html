@@ -5,17 +5,20 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>十齋日｜地藏禪寺弘法共修</title>
+
+<script src="https://cdn.jsdelivr.net/npm/lunar-javascript@1.7.8/lunar.min.js"></script>
+
 <style>
 *{box-sizing:border-box}
 body{
  margin:0;
- font-family:"Noto Serif TC",serif;
+ font-family:"Noto Serif TC","Microsoft JhengHei",serif;
  background:#f7f2e8;
  color:#57452d;
 }
 header{
  text-align:center;
- padding:45px 15px 35px;
+ padding:38px 15px 30px;
  background:linear-gradient(145deg,#e9d9b8,#fffaf0);
  border-bottom:1px solid #d7c39c;
 }
@@ -27,13 +30,84 @@ header h1{
 }
 header p{letter-spacing:3px;font-size:14px}
 .container{max-width:760px;margin:auto;padding:22px 16px}
-h2{text-align:center;color:#886b36;font-size:21px}
+h2{text-align:center;color:#886b36}
+.today{
+ background:linear-gradient(145deg,#fffdf7,#eee1c5);
+ border:1px solid #d9c69f;
+ border-radius:15px;
+ padding:20px 15px;
+ text-align:center;
+ margin-bottom:22px;
+}
+.today h2{margin:5px}
+.today-date{font-size:15px;line-height:2}
+.today-status{
+ font-size:19px;
+ font-weight:bold;
+ color:#98743b;
+ margin:12px 0;
+}
+.countdown{
+ font-size:25px;
+ color:#9b7337;
+ font-weight:bold;
+}
+.section-title{
+ text-align:center;
+ color:#886b36;
+ font-size:21px;
+ margin:28px 0 10px;
+}
 .intro{text-align:center;font-size:14px;line-height:2}
+.calendar{
+ background:#fffdf8;
+ border:1px solid #dfcfad;
+ border-radius:13px;
+ padding:15px;
+ margin-top:15px;
+}
+.month-title{
+ text-align:center;
+ font-size:18px;
+ color:#886b36;
+ font-weight:bold;
+ margin-bottom:12px;
+}
+.date-row{
+ display:flex;
+ align-items:center;
+ gap:8px;
+ padding:12px 9px;
+ border-bottom:1px solid #eee5d3;
+ cursor:pointer;
+ border-radius:8px;
+}
+.date-row:last-child{border-bottom:0}
+.date-row.today-row{background:#f7e9c8}
+.date-row.past{opacity:.58}
+.date-number{
+ width:65px;
+ font-weight:bold;
+ color:#886b36;
+}
+.date-info{flex:1;font-size:13px;line-height:1.7}
+.date-info strong{font-size:14px}
+.date-state{
+ font-size:11px;
+ color:#927746;
+ white-space:nowrap;
+}
+.badge-today{
+ color:#fff;
+ background:#a78343;
+ padding:4px 7px;
+ border-radius:12px;
+}
 .days{
  display:grid;
  grid-template-columns:repeat(2,1fr);
  gap:12px;
- margin-top:22px;
+ margin-top:18px;
 }
 .day{
  background:#fffdf8;
@@ -43,7 +117,6 @@ h2{text-align:center;color:#886b36;font-size:21px}
  text-align:center;
  cursor:pointer;
  color:#755b31;
- transition:.2s;
 }
 .day:active{background:#eee1c5}
 .day strong{display:block;font-size:22px;margin-bottom:7px}
@@ -59,7 +132,15 @@ h2{text-align:center;color:#886b36;font-size:21px}
  text-align:center;
 }
 .detail h2{font-size:25px}
-.detail h3{color:#9b773a}
+.detail h3{color:#9b773a;font-size:21px}
+.detail-date{color:#9b8258;font-size:13px}
+.practice{
+ background:#f7f2e8;
+ padding:15px;
+ border-radius:10px;
+ margin:15px 0;
+ text-align:left;
+}
 .back{
  border:0;
  border-radius:20px;
@@ -73,9 +154,23 @@ footer{
  padding:30px 10px;
  font-size:13px;
  color:#917a55;
+ line-height:2;
+}
+.error{
+ color:#a34b35;
+ background:#fff0e9;
+ padding:12px;
+ border-radius:8px;
+ display:none;
+}
+@media(max-width:380px){
+ .date-number{width:55px}
+ .date-state{font-size:10px}
+ .countdown{font-size:21px}
 }
 </style>
 </head>
+
 <body>
 
 <header>
@@ -85,21 +180,52 @@ footer{
 </header>
 
 <main class="container">
- <h2>每月十齋日</h2>
+
+ <section class="today">
+  <h2>今日日期</h2>
+  <div class="today-date" id="todayDate">日期載入中...</div>
+  <div class="today-date" id="lunarToday"></div>
+  <div class="today-status" id="todayStatus">正在確認今日齋日...</div>
+  <div class="countdown" id="countdown"></div>
+ </section>
+
+ <div class="error" id="errorMessage">
+  農曆日期載入失敗，請重新整理網頁。
+ </div>
+
+ <h2 class="section-title">本月十齋日</h2>
  <p class="intro">
- 恭敬持齋，虔誠念佛，<br>
- 日日修善，廣植福田。
+  自動對照農曆與國曆日期<br>
+  點擊日期即可查看當日佛菩薩及修持內容
  </p>
+
+ <section class="calendar">
+  <div class="month-title" id="monthTitle">本月日期載入中...</div>
+  <div id="calendarList"></div>
+ </section>
+
+ <h2 class="section-title">十齋日佛菩薩一覽</h2>
 
  <div class="days" id="days"></div>
 
  <section class="detail" id="detail">
+  <div class="detail-date" id="detailSolar"></div>
   <h2 id="date"></h2>
   <h3 id="buddha"></h3>
+  <p id="executor"></p>
   <p id="description"></p>
-  <p>恭敬禮佛・念佛修持・發願迴向</p>
+
+  <div class="practice">
+   <strong>今日修持建議</strong>
+   <p>一、恭敬持齋，清淨身心。</p>
+   <p>二、虔誠念誦當日佛菩薩聖號。</p>
+   <p>三、禮佛、懺悔、發願。</p>
+   <p>四、將修持功德迴向一切眾生。</p>
+  </div>
+
   <button class="back" onclick="goBack()">返回十齋日</button>
  </section>
+
 </main>
 
 <footer>
@@ -108,7 +234,6 @@ footer{
 </footer>
 
 <script>
-
 const data=[
  ["初一","南無定光王如來","善惡童子","恭敬持齋，念誦定光王如來聖號，清淨身心。"],
  ["初八","南無藥師琉璃光佛","太子","恭敬持齋，念誦藥師琉璃光佛聖號，祈願身心安穩。"],
@@ -122,19 +247,190 @@ const data=[
  ["三十","南無釋迦牟尼佛","天曹地府","恭敬持齋，念誦釋迦牟尼佛聖號，感念佛恩。"]
 ];
 
+const fastingDays=[1,8,14,15,18,23,24,28,29,30];
+
+function dateOnly(date){
+ return new Date(date.getFullYear(),date.getMonth(),date.getDate());
+}
+
+function addDays(date,n){
+ const result=new Date(date);
+ result.setDate(result.getDate()+n);
+ return result;
+}
+
+function sameDay(a,b){
+ return a.getFullYear()===b.getFullYear()
+ && a.getMonth()===b.getMonth()
+ && a.getDate()===b.getDate();
+}
+
+function formatSolar(date){
+ return date.getFullYear()+"年"+
+ (date.getMonth()+1)+"月"+
+ date.getDate()+"日";
+}
+
+function getLunar(date){
+ return Lunar.fromDate(date);
+}
+
+function getLunarName(lunar){
+ return "農曆"+lunar.getMonthInChinese()+"月"+
+ lunar.getDayInChinese();
+}
+
+function sameLunarMonth(a,b){
+ return a.getYear()===b.getYear()
+ && a.getMonth()===b.getMonth()
+ && a.isLeap()===b.isLeap();
+}
+
+function getMonthDates(today){
+ const lunarToday=getLunar(today);
+ const firstDay=addDays(today,1-lunarToday.getDay());
+ const result=[];
+
+ for(let i=0;i<31;i++){
+  const solar=addDays(firstDay,i);
+  const lunar=getLunar(solar);
+
+  if(!sameLunarMonth(lunar,lunarToday)) break;
+
+  if(fastingDays.includes(lunar.getDay())){
+   result.push({
+    solar:solar,
+    lunarDay:lunar.getDay(),
+    item:data[fastingDays.indexOf(lunar.getDay())]
+   });
+  }
+ }
+ return result;
+}
+
+function getNextFasting(today){
+ for(let i=0;i<=40;i++){
+  const date=addDays(today,i);
+  const lunar=getLunar(date);
+
+  if(fastingDays.includes(lunar.getDay())){
+   return {
+    date:date,
+    lunarDay:lunar.getDay(),
+    distance:i
+   };
+  }
+ }
+ return null;
+}
+
+function renderToday(today){
+ const lunar=getLunar(today);
+
+ document.getElementById("todayDate").textContent=
+ formatSolar(today);
+
+ document.getElementById("lunarToday").textContent=
+ getLunarName(lunar);
+
+ const status=document.getElementById("todayStatus");
+ const countdown=document.getElementById("countdown");
+
+ if(fastingDays.includes(lunar.getDay())){
+  status.textContent="今日是十齋日！";
+  countdown.textContent=
+   "農曆"+lunar.getDayInChinese()+"日・歡迎大眾共修";
+ }else{
+  const next=getNextFasting(today);
+
+  status.textContent="今日不是十齋日";
+
+  if(next){
+   countdown.textContent=
+    next.distance===0
+    ?"今天就是十齋日"
+    :"距離下一個十齋日還有 "+next.distance+" 天";
+  }
+ }
+}
+
+function renderCalendar(today){
+ const lunar=getLunar(today);
+ const dates=getMonthDates(today);
+
+ document.getElementById("monthTitle").textContent=
+ "農曆"+lunar.getYear()+"年"+
+ lunar.getMonthInChinese()+"月";
+
+ const list=document.getElementById("calendarList");
+ list.innerHTML="";
+
+ dates.forEach(item=>{
+  const row=document.createElement("div");
+  row.className="date-row";
+
+  const isToday=sameDay(item.solar,today);
+  const isPast=item.solar<today;
+
+  if(isToday) row.classList.add("today-row");
+  if(isPast) row.classList.add("past");
+
+  const number=document.createElement("div");
+  number.className="date-number";
+  number.textContent=item.item[0];
+
+  const info=document.createElement("div");
+  info.className="date-info";
+
+  const name=document.createElement("strong");
+  name.textContent=item.item[1];
+
+  const solar=document.createElement("div");
+  solar.textContent=formatSolar(item.solar);
+
+  info.appendChild(name);
+  info.appendChild(solar);
+
+  const state=document.createElement("div");
+  state.className="date-state";
+
+  if(isToday){
+   state.innerHTML='<span class="badge-today">今天</span>';
+  }else if(isPast){
+   state.textContent="已過";
+  }else{
+   const distance=Math.round(
+    (item.solar-today)/86400000
+   );
+   state.textContent="還有 "+distance+" 天";
+  }
+
+  row.appendChild(number);
+  row.appendChild(info);
+  row.appendChild(state);
+
+  row.onclick=()=>showDay(
+   fastingDays.indexOf(item.lunarDay),
+   item.solar
+  );
+
+  list.appendChild(row);
+ });
+}
 
 const days=document.getElementById("days");
 
 data.forEach((item,index)=>{
  const btn=document.createElement("button");
  btn.className="day";
- btn.innerHTML=`<strong>${item[0]}</strong><span>點擊查看佛菩薩</span>`;
- btn.onclick=()=>showDay(index);
+ btn.innerHTML=
+  `<strong>${item[0]}</strong><span>${item[1]}</span>`;
+
+ btn.onclick=()=>showDay(index,null);
  days.appendChild(btn);
 });
 
-
-function showDay(index){
+function showDay(index,solarDate){
  const item=data[index];
 
  document.getElementById("date").textContent=
@@ -143,19 +439,60 @@ function showDay(index){
  document.getElementById("buddha").textContent=
  item[1];
 
+ document.getElementById("executor").textContent=
+ "當日執事："+item[2];
+
  document.getElementById("description").textContent=
- "當日執事："+item[2]+"。"+item[3];
+ item[3];
+
+ document.getElementById("detailSolar").textContent=
+ solarDate
+ ?formatSolar(solarDate)
+ :"十齋日修持專區";
 
  days.style.display="none";
+ document.querySelector(".calendar").style.display="none";
+ document.querySelector(".section-title").style.display="none";
+ document.querySelector(".intro").style.display="none";
+ document.querySelector(".today").style.display="none";
 
  document.getElementById("detail").style.display="block";
+ window.scrollTo(0,0);
 }
-
 
 function goBack(){
  document.getElementById("detail").style.display="none";
  days.style.display="grid";
+ document.querySelector(".calendar").style.display="block";
+ document.querySelectorAll(".section-title").forEach(
+  el=>el.style.display="block"
+ );
+ document.querySelector(".intro").style.display="block";
+ document.querySelector(".today").style.display="block";
+ window.scrollTo(0,0);
 }
+
+function start(){
+ try{
+  if(typeof Lunar==="undefined"){
+   throw new Error("農曆工具尚未載入");
+  }
+
+  const today=dateOnly(new Date());
+
+  renderToday(today);
+  renderCalendar(today);
+
+ }catch(error){
+  console.error(error);
+  document.getElementById("errorMessage").style.display="block";
+  document.getElementById("todayStatus").textContent=
+   "日期資料暫時無法載入";
+ }
+}
+
+start();
 </script>
+
 </body>
 </html>

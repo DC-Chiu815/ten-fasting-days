@@ -57,6 +57,44 @@ h2{text-align:center;color:#886b36}
  margin:28px 0 10px;
 }
 .intro{text-align:center;font-size:14px;line-height:2}
+
+/* 新增：十齋日弘法介紹 */
+.knowledge-sections{
+ margin:25px 0;
+}
+.knowledge-card{
+ background:#fffdf8;
+ border:1px solid #dfcfad;
+ border-radius:13px;
+ padding:19px 17px;
+ margin-bottom:14px;
+ line-height:2;
+}
+.knowledge-card h3{
+ text-align:center;
+ color:#98743b;
+ font-size:19px;
+ margin:0 0 12px;
+}
+.knowledge-card p{
+ margin:7px 0;
+ font-size:14px;
+}
+.knowledge-card ul{
+ padding-left:22px;
+ margin:8px 0;
+ font-size:14px;
+}
+.knowledge-card li{
+ margin:7px 0;
+}
+.knowledge-note{
+ text-align:center;
+ font-size:12px;
+ color:#927c59;
+ margin-top:12px;
+}
+
 .calendar{
  background:#fffdf8;
  border:1px solid #dfcfad;
@@ -207,6 +245,66 @@ footer{
  </section>
 
  <div class="error" id="errorMessage"></div>
+
+ <!-- 十齋日弘法介紹 -->
+ <section class="knowledge-sections">
+
+  <h2 class="section-title">認識十齋日</h2>
+
+  <div class="knowledge-card">
+   <h3>一、什麼是十齋日？</h3>
+   <p>
+    十齋日是農曆每月中特定的十個修持日，
+    分別為初一、初八、十四、十五、十八、
+    二十三、二十四、二十八、二十九及三十日。
+   </p>
+   <p>
+    佛教傳統重視這十個日子，鼓勵大眾持齋修善、
+    清淨身心、精進念佛，培養慈悲心與恭敬心。
+   </p>
+  </div>
+
+  <div class="knowledge-card">
+   <h3>二、十齋日的由來</h3>
+   <p>
+    十齋日是佛教傳統中每月特定的十個修持日。
+   </p>
+   <p>
+    依十齋日的傳統說法，每逢這些日子，
+    應當謹慎身口意，遠離惡行，廣修善法，
+    以清淨心念佛、禮佛、誦經，
+    增長福慧。
+   </p>
+  </div>
+
+  <div class="knowledge-card">
+   <h3>三、十齋日修持功德</h3>
+   <ul>
+    <li>
+     <strong>持齋清淨：</strong>
+     培養慈悲心，減少殺生，清淨身心。
+    </li>
+    <li>
+     <strong>念佛修持：</strong>
+     虔誠稱念當日佛菩薩聖號，增長信心與善念。
+    </li>
+    <li>
+     <strong>廣修善行：</strong>
+     孝親、布施、助人、懺悔，累積善因善緣。
+    </li>
+    <li>
+     <strong>功德迴向：</strong>
+     將修持功德迴向法界眾生，
+     祈願眾生離苦得樂。
+    </li>
+   </ul>
+  </div>
+
+  <p class="knowledge-note">
+   持齋念佛、廣修善行，願大眾福慧增長。
+  </p>
+
+ </section>
 
  <h2 class="section-title">本月十齋日</h2>
  <p class="intro">
@@ -488,6 +586,7 @@ function showDay(index,solarDate){
  );
 
  document.querySelector(".intro").style.display="none";
+ document.querySelector(".knowledge-sections").style.display="none";
  document.querySelector(".today").style.display="none";
  document.getElementById("detail").style.display="block";
 
@@ -505,6 +604,7 @@ function goBack(){
  );
 
  document.querySelector(".intro").style.display="block";
+ document.querySelector(".knowledge-sections").style.display="block";
  document.querySelector(".today").style.display="block";
 
  window.scrollTo(0,0);

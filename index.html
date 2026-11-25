@@ -133,16 +133,24 @@ data.forEach((item,index)=>{
  days.appendChild(btn);
 });
 
+
 function showDay(index){
  const item=data[index];
+
  document.getElementById("date").textContent=
  "農曆"+item[0];
- document.getElementById("buddha").textContent=item[1];
+
+ document.getElementById("buddha").textContent=
+ item[1];
+
  document.getElementById("description").textContent=
- "今日十齋日，歡迎大眾發心持齋、念佛、行善，清淨身心，廣積福慧。";
+ "當日執事："+item[2]+"。"+item[3];
+
  days.style.display="none";
+
  document.getElementById("detail").style.display="block";
 }
+
 
 function goBack(){
  document.getElementById("detail").style.display="none";

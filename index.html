@@ -58,10 +58,8 @@ h2{text-align:center;color:#886b36}
 }
 .intro{text-align:center;font-size:14px;line-height:2}
 
-/* 新增：十齋日弘法介紹 */
-.knowledge-sections{
- margin:25px 0;
-}
+/* 弘法介紹 */
+.knowledge-sections{margin:25px 0}
 .knowledge-card{
  background:#fffdf8;
  border:1px solid #dfcfad;
@@ -76,24 +74,66 @@ h2{text-align:center;color:#886b36}
  font-size:19px;
  margin:0 0 12px;
 }
-.knowledge-card p{
- margin:7px 0;
- font-size:14px;
-}
+.knowledge-card p{margin:7px 0;font-size:14px}
 .knowledge-card ul{
  padding-left:22px;
  margin:8px 0;
  font-size:14px;
 }
-.knowledge-card li{
- margin:7px 0;
-}
+.knowledge-card li{margin:7px 0}
 .knowledge-note{
  text-align:center;
  font-size:12px;
  color:#927c59;
  margin-top:12px;
 }
+
+/* 每日修持預告 */
+.preview-card{
+ background:linear-gradient(145deg,#fffdf7,#f1e4c9);
+ border:1px solid #d9c69f;
+ border-radius:15px;
+ padding:22px 17px;
+ margin:22px 0;
+ text-align:center;
+}
+.preview-card h2{
+ font-size:21px;
+ margin:0 0 14px;
+}
+.preview-buddha{
+ color:#98743b;
+ font-size:23px;
+ font-weight:bold;
+ line-height:1.8;
+}
+.preview-date{
+ font-size:14px;
+ line-height:2;
+ margin-top:8px;
+}
+.preview-merit{
+ color:#9b7337;
+ font-size:18px;
+ font-weight:bold;
+ margin:8px 0;
+}
+.preview-countdown{
+ color:#98743b;
+ font-size:15px;
+ font-weight:bold;
+ margin:10px 0;
+}
+.preview-practice{
+ background:#fffaf0;
+ border-radius:10px;
+ padding:14px;
+ margin-top:15px;
+ text-align:left;
+ line-height:1.9;
+ font-size:14px;
+}
+.preview-practice p{margin:7px 0}
 
 .calendar{
  background:#fffdf8;
@@ -185,10 +225,7 @@ h2{text-align:center;color:#886b36}
  margin:18px 0;
  text-align:center;
 }
-.merit-label{
- color:#886b36;
- font-size:15px;
-}
+.merit-label{color:#886b36;font-size:15px}
 .merit-value{
  color:#9b7337;
  font-size:30px;
@@ -222,6 +259,7 @@ footer{
  .date-number{width:55px}
  .date-state{font-size:10px}
  .countdown{font-size:21px}
+ .preview-buddha{font-size:20px}
 }
 </style>
 </head>
@@ -246,9 +284,24 @@ footer{
 
  <div class="error" id="errorMessage"></div>
 
+ <!-- 每日十齋日修持預告 -->
+ <section class="preview-card" id="previewCard" style="display:none">
+  <h2 id="previewTitle">下一個十齋日預告</h2>
+  <div class="preview-buddha" id="previewBuddha"></div>
+  <div class="preview-date" id="previewDate"></div>
+  <div class="preview-merit" id="previewMerit"></div>
+  <div class="preview-countdown" id="previewCountdown"></div>
+
+  <div class="preview-practice">
+   <strong>修持提醒</strong>
+   <p>一、恭敬持齋，清淨身心。</p>
+   <p>二、虔誠稱念當日佛菩薩聖號，十聲一拜，共三拜。</p>
+   <p>三、將修持功德迴向一切眾生。</p>
+  </div>
+ </section>
+
  <!-- 十齋日弘法介紹 -->
  <section class="knowledge-sections">
-
   <h2 class="section-title">認識十齋日</h2>
 
   <div class="knowledge-card">
@@ -272,38 +325,23 @@ footer{
    <p>
     依十齋日的傳統說法，每逢這些日子，
     應當謹慎身口意，遠離惡行，廣修善法，
-    以清淨心念佛、禮佛、誦經，
-    增長福慧。
+    以清淨心念佛、禮佛、誦經，增長福慧。
    </p>
   </div>
 
   <div class="knowledge-card">
    <h3>三、十齋日修持功德</h3>
    <ul>
-    <li>
-     <strong>持齋清淨：</strong>
-     培養慈悲心，減少殺生，清淨身心。
-    </li>
-    <li>
-     <strong>念佛修持：</strong>
-     虔誠稱念當日佛菩薩聖號，增長信心與善念。
-    </li>
-    <li>
-     <strong>廣修善行：</strong>
-     孝親、布施、助人、懺悔，累積善因善緣。
-    </li>
-    <li>
-     <strong>功德迴向：</strong>
-     將修持功德迴向法界眾生，
-     祈願眾生離苦得樂。
-    </li>
+    <li><strong>持齋清淨：</strong>培養慈悲心，減少殺生，清淨身心。</li>
+    <li><strong>念佛修持：</strong>虔誠稱念當日佛菩薩聖號，增長信心與善念。</li>
+    <li><strong>廣修善行：</strong>孝親、布施、助人、懺悔，累積善因善緣。</li>
+    <li><strong>功德迴向：</strong>將修持功德迴向法界眾生，祈願眾生離苦得樂。</li>
    </ul>
   </div>
 
   <p class="knowledge-note">
    持齋念佛、廣修善行，願大眾福慧增長。
   </p>
-
  </section>
 
  <h2 class="section-title">本月十齋日</h2>
@@ -443,6 +481,45 @@ function getNextFasting(today){
  return null;
 }
 
+/* 每日修持預告 */
+function renderPreview(today){
+ const next=getNextFasting(today);
+ const card=document.getElementById("previewCard");
+
+ if(!next){
+  card.style.display="none";
+  return;
+ }
+
+ const index=fastingDays.indexOf(next.lunarDay);
+ const item=data[index];
+
+ if(!item){
+  card.style.display="none";
+  return;
+ }
+
+ document.getElementById("previewTitle").textContent=
+  next.distance===0
+  ?"今日十齋日修持"
+  :"下一個十齋日預告";
+
+ document.getElementById("previewBuddha").textContent=item[1];
+
+ document.getElementById("previewDate").textContent=
+  "農曆"+item[0]+"・"+formatSolar(next.date);
+
+ document.getElementById("previewMerit").textContent=
+  "當日除罪劫數："+item[4];
+
+ document.getElementById("previewCountdown").textContent=
+  next.distance===0
+  ?"今天就是十齋日，歡迎大眾精進共修！"
+  :"距離此日還有 "+next.distance+" 天";
+
+ card.style.display="block";
+}
+
 function renderToday(today){
  const lunar=getLunar(today);
 
@@ -561,7 +638,7 @@ data.forEach((item,index)=>{
  days.appendChild(btn);
 });
 
-/* 顯示當日詳細資料及各自劫數 */
+/* 顯示詳細資料 */
 function showDay(index,solarDate){
  const item=data[index];
  if(!item)return;
@@ -588,6 +665,7 @@ function showDay(index,solarDate){
  document.querySelector(".intro").style.display="none";
  document.querySelector(".knowledge-sections").style.display="none";
  document.querySelector(".today").style.display="none";
+ document.getElementById("previewCard").style.display="none";
  document.getElementById("detail").style.display="block";
 
  window.scrollTo(0,0);
@@ -606,11 +684,12 @@ function goBack(){
  document.querySelector(".intro").style.display="block";
  document.querySelector(".knowledge-sections").style.display="block";
  document.querySelector(".today").style.display="block";
+ document.getElementById("previewCard").style.display="block";
 
  window.scrollTo(0,0);
 }
 
-/* 載入農曆程式，並提供備用來源 */
+/* 載入農曆程式 */
 function loadLunarLibrary(url){
  return new Promise((resolve,reject)=>{
   const script=document.createElement("script");
@@ -630,6 +709,7 @@ function loadLunarLibrary(url){
 
   document.head.appendChild(script);
  });
+
 }
 
 async function start(){
@@ -653,8 +733,10 @@ async function start(){
   }
 
   const today=dateOnly(new Date());
+
   renderToday(today);
   renderCalendar(today);
+  renderPreview(today);
 
   errorBox.style.display="none";
 

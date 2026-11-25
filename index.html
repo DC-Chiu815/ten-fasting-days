@@ -1,0 +1,151 @@
+
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>十齋日｜地藏禪寺弘法共修</title>
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;
+ font-family:"Noto Serif TC",serif;
+ background:#f7f2e8;
+ color:#57452d;
+}
+header{
+ text-align:center;
+ padding:45px 15px 35px;
+ background:linear-gradient(145deg,#e9d9b8,#fffaf0);
+ border-bottom:1px solid #d7c39c;
+}
+header h1{
+ font-size:36px;
+ letter-spacing:12px;
+ margin:10px 0;
+ color:#886b36;
+}
+header p{letter-spacing:3px;font-size:14px}
+.container{max-width:760px;margin:auto;padding:22px 16px}
+h2{text-align:center;color:#886b36;font-size:21px}
+.intro{text-align:center;font-size:14px;line-height:2}
+.days{
+ display:grid;
+ grid-template-columns:repeat(2,1fr);
+ gap:12px;
+ margin-top:22px;
+}
+.day{
+ background:#fffdf8;
+ border:1px solid #dfcfad;
+ border-radius:12px;
+ padding:18px 8px;
+ text-align:center;
+ cursor:pointer;
+ color:#755b31;
+ transition:.2s;
+}
+.day:active{background:#eee1c5}
+.day strong{display:block;font-size:22px;margin-bottom:7px}
+.day span{font-size:13px}
+.detail{
+ display:none;
+ background:#fffdf8;
+ border:1px solid #dfcfad;
+ border-radius:14px;
+ padding:22px;
+ margin-top:25px;
+ line-height:2;
+ text-align:center;
+}
+.detail h2{font-size:25px}
+.detail h3{color:#9b773a}
+.back{
+ border:0;
+ border-radius:20px;
+ padding:10px 25px;
+ background:#a98b54;
+ color:white;
+ cursor:pointer;
+}
+footer{
+ text-align:center;
+ padding:30px 10px;
+ font-size:13px;
+ color:#917a55;
+}
+</style>
+</head>
+<body>
+
+<header>
+ <p>地藏禪寺・弘法共修專區</p>
+ <h1>十齋日</h1>
+ <p>持齋念佛・清淨身心・廣積福慧</p>
+</header>
+
+<main class="container">
+ <h2>每月十齋日</h2>
+ <p class="intro">
+ 恭敬持齋，虔誠念佛，<br>
+ 日日修善，廣植福田。
+ </p>
+
+ <div class="days" id="days"></div>
+
+ <section class="detail" id="detail">
+  <h2 id="date"></h2>
+  <h3 id="buddha"></h3>
+  <p id="description"></p>
+  <p>恭敬禮佛・念佛修持・發願迴向</p>
+  <button class="back" onclick="goBack()">返回十齋日</button>
+ </section>
+</main>
+
+<footer>
+ 南無阿彌陀佛<br>
+ 地藏禪寺・十齋日弘法共修平台
+</footer>
+
+<script>
+const data=[
+ ["初一","南無定光王如來"],
+ ["初八","南無藥師琉璃光佛"],
+ ["十四","南無賢劫千佛"],
+ ["十五","南無阿彌陀佛"],
+ ["十八","南無觀世音菩薩"],
+ ["二十三","南無盧舍那佛"],
+ ["二十四","南無地藏王菩薩"],
+ ["二十八","南無阿彌陀佛"],
+ ["二十九","南無藥王藥上菩薩"],
+ ["三十","南無釋迦牟尼佛"]
+];
+
+const days=document.getElementById("days");
+
+data.forEach((item,index)=>{
+ const btn=document.createElement("button");
+ btn.className="day";
+ btn.innerHTML=`<strong>${item[0]}</strong><span>點擊查看佛菩薩</span>`;
+ btn.onclick=()=>showDay(index);
+ days.appendChild(btn);
+});
+
+function showDay(index){
+ const item=data[index];
+ document.getElementById("date").textContent=
+ "農曆"+item[0];
+ document.getElementById("buddha").textContent=item[1];
+ document.getElementById("description").textContent=
+ "今日十齋日，歡迎大眾發心持齋、念佛、行善，清淨身心，廣積福慧。";
+ days.style.display="none";
+ document.getElementById("detail").style.display="block";
+}
+
+function goBack(){
+ document.getElementById("detail").style.display="none";
+ days.style.display="grid";
+}
+</script>
+</body>
+</html>

@@ -139,6 +139,24 @@ h2{text-align:center;color:#886b36}
  margin:15px 0;
  text-align:left;
 }
+.merit-box{
+ background:linear-gradient(145deg,#fff8e8,#f0dfbd);
+ border:1px solid #d9bd83;
+ border-radius:12px;
+ padding:16px;
+ margin:18px 0;
+ text-align:center;
+}
+.merit-label{
+ color:#886b36;
+ font-size:15px;
+}
+.merit-value{
+ color:#9b7337;
+ font-size:30px;
+ font-weight:bold;
+ margin-top:5px;
+}
 .back{
  border:0;
  border-radius:20px;
@@ -202,7 +220,6 @@ footer{
  </section>
 
  <h2 class="section-title">十齋日佛菩薩一覽</h2>
-
  <div class="days" id="days"></div>
 
  <section class="detail" id="detail">
@@ -213,11 +230,15 @@ footer{
   <p id="description"></p>
 
   <div class="practice">
-   <strong>今日修持建議</strong>
+   <strong>今日修持方式</strong>
    <p>一、恭敬持齋，清淨身心。</p>
-   <p>二、虔誠念誦當日佛菩薩聖號。</p>
-   <p>三、禮佛、懺悔、發願。</p>
-   <p>四、將修持功德迴向一切眾生。</p>
+   <p>二、虔誠稱念當日佛菩薩聖號，十聲一拜，共三拜。</p>
+   <p>三、將修持功德迴向一切眾生。</p>
+  </div>
+
+  <div class="merit-box">
+   <div class="merit-label">當日除罪劫數</div>
+   <div class="merit-value" id="merit"></div>
   </div>
 
   <button class="back" onclick="goBack()">返回十齋日</button>
@@ -231,17 +252,21 @@ footer{
 </footer>
 
 <script>
+/*
+ 每筆資料依序為：
+ 農曆日期、佛菩薩聖號、當日執事、修持說明、除罪劫數
+*/
 const data=[
- ["初一","南無定光王如來","善惡童子","恭敬持齋，念誦定光王如來聖號，清淨身心。"],
- ["初八","南無藥師琉璃光佛","太子","恭敬持齋，念誦藥師琉璃光佛聖號，祈願身心安穩。"],
- ["十四","南無賢劫千佛","察命伺錄","恭敬持齋，念誦賢劫千佛聖號，廣修善行。"],
- ["十五","南無阿彌陀佛","五道大神","恭敬持齋，念誦阿彌陀佛聖號，發願求生淨土。"],
- ["十八","南無觀世音菩薩","閻羅王","恭敬持齋，念誦觀世音菩薩聖號，學習慈悲。"],
- ["二十三","南無盧舍那佛","天大將軍","恭敬持齋，念誦盧舍那佛聖號，發心修善。"],
- ["二十四","南無地藏王菩薩","帝釋","恭敬持齋，念誦地藏王菩薩聖號，發願孝親報恩。"],
- ["二十八","南無阿彌陀佛","太山府君","恭敬持齋，念誦阿彌陀佛聖號，培植清淨善根。"],
- ["二十九","南無藥王藥上菩薩","四天王","恭敬持齋，念誦藥王藥上菩薩聖號，廣行善法。"],
- ["三十","南無釋迦牟尼佛","天曹地府","恭敬持齋，念誦釋迦牟尼佛聖號，感念佛恩。"]
+ ["初一","南無定光王如來","善惡童子","恭敬持齋，念誦定光王如來聖號，清淨身心。","四十劫"],
+ ["初八","南無藥師琉璃光如來","太子","恭敬持齋，念誦藥師琉璃光如來聖號，祈願身心安穩。","三十劫"],
+ ["十四","南無賢劫千佛","察命伺錄","恭敬持齋，念誦賢劫千佛聖號，廣修善行。","一千劫"],
+ ["十五","南無阿彌陀佛","五道大神","恭敬持齋，念誦阿彌陀佛聖號，發願求生淨土。","二百劫"],
+ ["十八","南無觀世音菩薩","閻羅王","恭敬持齋，念誦觀世音菩薩聖號，學習慈悲。","九十劫"],
+ ["二十三","南無盧舍那佛","天大將軍","恭敬持齋，念誦盧舍那佛聖號，發心修善。","一千劫"],
+ ["二十四","南無地藏菩薩","帝釋","恭敬持齋，念誦地藏菩薩聖號，發願孝親報恩。","九十劫"],
+ ["二十八","南無毘盧遮那佛","太山府君","恭敬持齋，念誦毘盧遮那佛聖號，培植清淨善根。","一千劫"],
+ ["二十九","南無藥王藥上菩薩","四天王","恭敬持齋，念誦藥王藥上菩薩聖號，廣行善法。","七千劫"],
+ ["三十","南無本師釋迦牟尼佛","天曹地府","恭敬持齋，念誦本師釋迦牟尼佛聖號，感念佛恩。","八千劫"]
 ];
 
 const fastingDays=[1,8,14,15,18,23,24,28,29,30];
@@ -277,13 +302,11 @@ function getLunarName(lunar){
  lunar.getDayInChinese();
 }
 
-/* 比較農曆年及月份，閏月使用負月份值區分 */
 function sameLunarMonth(a,b){
  return a.getYear()===b.getYear()
  && a.getMonth()===b.getMonth();
 }
 
-/* 計算本農曆月的十齋日國曆日期 */
 function getMonthDates(today){
  const lunarToday=getLunar(today);
  const firstDay=addDays(today,1-lunarToday.getDay());
@@ -293,9 +316,7 @@ function getMonthDates(today){
   const solar=addDays(firstDay,i);
   const lunar=getLunar(solar);
 
-  if(!sameLunarMonth(lunar,lunarToday)){
-   break;
-  }
+  if(!sameLunarMonth(lunar,lunarToday)) break;
 
   if(fastingDays.includes(lunar.getDay())){
    result.push({
@@ -308,7 +329,6 @@ function getMonthDates(today){
  return result;
 }
 
-/* 尋找下一個十齋日 */
 function getNextFasting(today){
  for(let i=0;i<=40;i++){
   const date=addDays(today,i);
@@ -325,7 +345,6 @@ function getNextFasting(today){
  return null;
 }
 
-/* 顯示今日日期及倒數 */
 function renderToday(today){
  const lunar=getLunar(today);
 
@@ -355,7 +374,6 @@ function renderToday(today){
  }
 }
 
-/* 顯示本月十齋日清單 */
 function renderCalendar(today){
  const lunar=getLunar(today);
  const dates=getMonthDates(today);
@@ -425,7 +443,7 @@ function renderCalendar(today){
  });
 }
 
-/* 建立十齋日佛菩薩按鈕 */
+/* 建立十齋日一覽 */
 const days=document.getElementById("days");
 
 data.forEach((item,index)=>{
@@ -440,12 +458,12 @@ data.forEach((item,index)=>{
 
  btn.appendChild(title);
  btn.appendChild(name);
- btn.onclick=()=>showDay(index,null);
 
+ btn.onclick=()=>showDay(index,null);
  days.appendChild(btn);
 });
 
-/* 顯示齋日詳細資料 */
+/* 顯示當日詳細資料及各自劫數 */
 function showDay(index,solarDate){
  const item=data[index];
  if(!item)return;
@@ -455,6 +473,9 @@ function showDay(index,solarDate){
  document.getElementById("executor").textContent=
  "當日執事："+item[2];
  document.getElementById("description").textContent=item[3];
+
+ document.getElementById("merit").textContent=
+ "除罪"+item[4];
 
  document.getElementById("detailSolar").textContent=
  solarDate?formatSolar(solarDate):"十齋日修持專區";
@@ -489,7 +510,7 @@ function goBack(){
  window.scrollTo(0,0);
 }
 
-/* 依序嘗試兩個農曆程式來源 */
+/* 載入農曆程式，並提供備用來源 */
 function loadLunarLibrary(url){
  return new Promise((resolve,reject)=>{
   const script=document.createElement("script");
@@ -511,7 +532,6 @@ function loadLunarLibrary(url){
  });
 }
 
-/* 啟動網站 */
 async function start(){
  const errorBox=document.getElementById("errorMessage");
 
@@ -533,7 +553,6 @@ async function start(){
   }
 
   const today=dateOnly(new Date());
-
   renderToday(today);
   renderCalendar(today);
 
@@ -543,7 +562,7 @@ async function start(){
   console.error("十齋日日期載入錯誤：",error);
 
   errorBox.textContent=
-   "農曆日期載入失敗。請確認網路連線，稍後重新整理。錯誤："+error.message;
+   "農曆日期載入失敗，請確認網路連線後重新整理。";
 
   errorBox.style.display="block";
 
